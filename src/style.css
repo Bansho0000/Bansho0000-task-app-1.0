@@ -1,0 +1,195 @@
+/* 基本スタイル調整 */
+body {
+    font-family: sans-serif;
+}
+h1 {
+    text-align: center;
+}
+/* 優先度表示のスタイル */
+.priority-indicator {
+    color: #ffc107;
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+
+/* .task-item に対応するBootstrapクラス .list-group-item へのスタイル */
+.list-group-item {
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out, background-color 0.2s ease;
+    opacity: 1;
+    transform: translateX(0);
+    cursor: grab;
+}
+.list-group-item:active {
+    cursor: grabbing;
+}
+
+/* アニメーション用クラス定義 */
+.task-item-entering {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+.task-item-leaving {
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+/* チェックボックス */
+.form-check-input {
+    margin-right: 0.8em;
+    cursor: pointer;
+}
+
+/* タスクテキストと期限/残り時間をまとめるラッパー */
+.task-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    margin-right: 10px;
+    overflow: hidden;
+}
+
+/* タスクテキスト */
+.task-text {
+    word-break: break-all;
+}
+
+/* 期限表示用のスタイル */
+.due-date {
+    font-size: 0.8em;
+    color: #6c757d;
+    margin-top: 2px;
+}
+
+/* 残り時間表示用のスタイル */
+.remaining-time {
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #dc3545;
+    margin-top: 2px;
+}
+.remaining-time.far {
+    color: #6c757d;
+    font-weight: normal;
+}
+.remaining-time.overdue {
+    color: #fd7e14;
+    font-weight: bold;
+}
+
+/* 削除ボタン */
+.btn-danger {
+    flex-shrink: 0;
+    cursor: pointer;
+}
+.btn-danger:active {
+     cursor: pointer;
+}
+
+/* ドラッグ＆ドロップ中のスタイル (SortableJS用) */
+.sortable-ghost {
+    opacity: 0.4;
+    background-color: #cce5ff;
+}
+.sortable-chosen {
+    background-color: #f0f8ff;
+    cursor: grabbing !important;
+}
+.sortable-drag {
+     opacity: 0.9;
+     cursor: grabbing !important;
+}
+
+.task-details-preview {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+    white-space: pre-line;
+    max-height: 3em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.details-button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.details-button:hover {
+    background-color: #0dcaf0;
+    color: white;
+    border-color: #0dcaf0;
+}
+
+.details-button i {
+    font-size: 0.9em;
+}
+
+.task-details-container {
+    margin-top: 0.5rem;
+    padding-left: 2.5rem;
+    border-left: 3px solid #e9ecef;
+}
+
+.task-details-content {
+    font-size: 0.875rem;
+    color: #6c757d;
+    white-space: pre-line;
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.toggle-details {
+    color: #6c757d;
+    transition: transform 0.2s ease;
+}
+
+.toggle-details:hover {
+    color: #0d6efd;
+}
+
+.toggle-details i {
+    transition: transform 0.2s ease;
+}
+
+.toggle-details i.fa-chevron-up {
+    transform: rotate(180deg);
+}
+
+.details-line {
+    padding: 0.25rem 0;
+    word-break: break-all;
+}
+
+.sort-button-group {
+    margin-left: auto;
+}
+
+.sort-button {
+    font-size: 0.875rem;
+}
+
+.sort-button i {
+    font-size: 0.9em;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#in-progress-task-area {
+    border-left: 4px solid #198754;
+}
+
+#in-progress-task-area .card-header {
+    color: #198754;
+    font-weight: bold;
+}
+
+#in-progress-task-list .list-group-item {
+    background-color: #f8fff9;
+}
