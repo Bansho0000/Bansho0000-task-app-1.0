@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ja" data-bs-theme="auto">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>タスク管理アプリ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css' rel='stylesheet' />
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5f6fa;
+            --accent-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --text-color: #2c3e50;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --card-padding: 1.5rem;
+            --input-height: 3rem;
+            --button-height: 3rem;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --font-size-sm: 0.875rem;
+            --font-size-md: 1rem;
+            --font-size-lg: 1.25rem;
+            --font-weight-normal: 400;
+            --font-weight-medium: 500;
+            --font-weight-bold: 600;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: var(--text-color);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            letter-spacing: 0.3px;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--box-shadow);
+            padding: var(--spacing-md) var(--spacing-lg);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-weight: var(--font-weight-bold);
+            color: var(--primary-color);
+            font-size: var(--font-size-lg);
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link {
+            color: var(--text-color);
+            font-weight: var(--font-weight-medium);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-link:hover {
+            background: var(--secondary-color);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            padding: var(--spacing-lg);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background: transparent;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: var(--spacing-md);
+            font-weight: var(--font-weight-bold);
+            font-size: var(--font-size-lg);
+        }
+
+        .form-control {
+            border-radius: var(--border-radius);
+            border: 2px solid #e1e1e1;
+            padding: var(--spacing-sm);
+            height: var(--input-height);
+            transition: var(--transition);
+            font-size: var(--font-size-md);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .btn {
+            border-radius: var(--border-radius);
+            padding: var(--spacing-sm) var(--spacing-md);
+            font-weight: var(--font-weight-medium);
+            transition: var(--transition);
+            height: var(--button-height);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #357abd;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-success {
+            background: var(--accent-color);
+            border: none;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            border: none;
+        }
+
+        .list-group-item {
+            border: none;
+            margin-bottom: var(--spacing-xs);
+            border-radius: var(--border-radius) !important;
+            background: white;
+            transition: var(--transition);
+            padding: var(--spacing-sm);
+        }
+
+        .list-group-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--box-shadow);
+        }
+
+        .task-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-xs);
+        }
+
+        .task-text {
+            font-size: var(--font-size-md);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .due-date {
+            font-size: var(--font-size-sm);
+            color: #666;
+        }
+
+        .remaining-time {
+            font-size: var(--font-size-sm);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--border-radius);
+            background: var(--secondary-color);
+            display: inline-block;
+        }
+
+        .remaining-time.overdue {
+            background: #ffe0e0;
+            color: var(--danger-color);
+        }
+
+        .task-details-container {
+            background: var(--secondary-color);
+            border-radius: var(--border-radius);
+            margin-top: var(--spacing-xs);
+            padding: var(--spacing-sm);
+        }
+
+        .task-details-content {
+            font-size: var(--font-size-sm);
+            line-height: 1.6;
+        }
+
+        .attachments-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-xs);
+        }
+
+        .attachments-preview img {
+            max-width: 150px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .attachments-preview a {
+            color: var(--primary-color);
+            text-decoration: none;
+            padding: var(--spacing-xs);
+            border-radius: var(--border-radius);
+            background: white;
+            transition: var(--transition);
+        }
+
+        .attachments-preview a:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .priority-indicator {
+            color: #f1c40f;
+            margin-right: var(--spacing-xs);
+        }
+
+        .completed .task-text {
+            text-decoration: line-through;
+            color: #95a5a6;
+        }
+
+        .completed {
+            background: #f8f9fa;
+        }
+
+        .sort-button-group {
+            display: flex;
+            gap: var(--spacing-xs);
+        }
+
+        .sort-button {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            font-size: var(--font-size-sm);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: var(--spacing-sm);
+            }
+
+            .card-header {
+                padding: var(--spacing-sm);
+            }
+
+            .btn {
+                padding: var(--spacing-xs) var(--spacing-sm);
+            }
+        }
+
+        /* ダークモード対応 */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-color: #3498db;
+                --secondary-color: #1a2634;
+                --accent-color: #2ecc71;
+                --danger-color: #e74c3c;
+                --text-color: #ecf0f1;
+                --border-color: #2c3e50;
+                --bg-color: #0f1923;
+                --card-bg: rgba(26, 38, 52, 0.95);
+                --input-bg: #1a2634;
+                --hover-bg: rgba(52, 152, 219, 0.1);
+                --completed-bg: #1a2634;
+                --completed-text: #95a5a6;
+                --icon-color: #95a5a6;
+                --overdue-bg: rgba(231, 76, 60, 0.2);
+                --overdue-text: #ff6b6b;
+            }
+
+            body {
+                background: linear-gradient(135deg, #0f1923 0%, #1a2634 100%);
+                color: var(--text-color);
+            }
+
+            .navbar {
+                background: rgba(26, 38, 52, 0.95);
+                backdrop-filter: blur(10px);
+            }
+
+            .navbar-brand {
+                color: #3498db;
+            }
+
+            .nav-link {
+                color: #ecf0f1;
+            }
+
+            .nav-link:hover {
+                background: var(--hover-bg);
+                color: #3498db;
+            }
+
+            .card {
+                background: var(--card-bg);
+                border-color: var(--border-color);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            }
+
+            .card-header {
+                background: transparent;
+                border-bottom-color: var(--border-color);
+                color: var(--text-color);
+            }
+
+            .list-group-item {
+                background: var(--card-bg);
+                border-color: var(--border-color);
+                color: var(--text-color);
+            }
+
+            .list-group-item:hover {
+                background: var(--hover-bg);
+                transform: translateX(5px);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            }
+
+            .form-control {
+                background: var(--input-bg);
+                border-color: var(--border-color);
+                color: var(--text-color);
+            }
+
+            .form-control:focus {
+                background: var(--input-bg);
+                border-color: #3498db;
+                color: var(--text-color);
+            }
+
+            .form-control::placeholder {
+                color: rgba(236, 240, 241, 0.6);
+            }
+
+            .btn-outline-primary {
+                color: #3498db;
+                border-color: #3498db;
+            }
+
+            .btn-outline-primary:hover {
+                background: #3498db;
+                color: #fff;
+            }
+
+            .btn-outline-secondary {
+                color: #95a5a6;
+                border-color: #95a5a6;
+            }
+
+            .btn-outline-secondary:hover {
+                background: #95a5a6;
+                color: #fff;
+            }
+
+            .modal-content {
+                background: var(--card-bg);
+                border-color: var(--border-color);
+            }
+
+            .modal-header {
+                border-bottom-color: var(--border-color);
+            }
+
+            .modal-footer {
+                border-top-color: var(--border-color);
+            }
+
+            .task-details-container {
+                background: var(--input-bg);
+            }
+
+            .attachments-preview {
+                border-color: var(--border-color);
+            }
+
+            .completed {
+                background: var(--completed-bg) !important;
+            }
+
+            .completed .task-text {
+                color: var(--completed-text) !important;
+            }
+
+            .completed .task-content-wrapper {
+                color: var(--completed-text) !important;
+            }
+
+            .completed .priority-indicator {
+                color: var(--completed-text) !important;
+            }
+
+            .completed .due-date {
+                color: var(--completed-text) !important;
+            }
+
+            .completed .remaining-time {
+                color: var(--completed-text) !important;
+            }
+
+            .completed .task-details-content {
+                color: var(--completed-text) !important;
+            }
+
+            .completed .text-muted {
+                color: var(--completed-text) !important;
+            }
+
+            .form-label {
+                color: var(--text-color);
+            }
+
+            .modal-title {
+                color: var(--text-color);
+            }
+
+            .text-primary {
+                color: #3498db !important;
+            }
+
+            .text-center {
+                color: var(--text-color);
+            }
+
+            .h5 {
+                color: var(--text-color);
+            }
+
+            .remaining-time.overdue {
+                background: var(--overdue-bg);
+                color: var(--overdue-text);
+            }
+        }
+    </style>
+      <script type="module" crossorigin src="/assets/index-Cg4Y9jNU.js"></script>
+      <link rel="stylesheet" crossorigin href="/assets/index-ByWoGWdG.css">
+    </head>
+<body class="bg-light py-4">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">タスク管理アプリ</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">タスク一覧</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="calendar.html">カレンダー</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="progress.html">進捗レポート</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="deleted.html">削除済みタスク</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="my-4 text-primary text-center">タスク管理アプリ</h1>
+
+        <div class="text-center mb-4">
+            <a href="/calendar.html" class="btn btn-outline-primary me-2">
+                <i class="fas fa-calendar-alt me-1"></i> カレンダーで見る
+            </a>
+            <a href="/progress.html" class="btn btn-outline-success me-2">
+                <i class="fas fa-chart-line me-1"></i> 進捗レポート
+            </a>
+            <a href="/deleted.html" class="btn btn-outline-secondary">
+                <i class="fas fa-trash-alt me-1"></i> 削除済みタスク
+            </a>
+        </div>
+
+        <div id="input-area" class="input-group mb-3 shadow-sm">
+            <input type="text" id="task-input" class="form-control" placeholder="新しいタスクを入力">
+            <input type="datetime-local" id="task-due-date" class="form-control" style="max-width: 230px;">
+            <button id="add-button" class="btn btn-primary">追加</button>
+        </div>
+
+        <div id="task-details-input" class="mb-3">
+            <textarea id="task-details" class="form-control" rows="2" placeholder="タスクの詳細情報を入力（任意）"></textarea>
+        </div>
+
+        <div id="task-list-area" class="card mb-3">
+            <div class="card-header h5">未完了のタスク (ドラッグで並び替え可能)</div>
+            <ul id="task-list" class="list-group list-group-flush"></ul>
+        </div>
+
+        <div id="in-progress-task-area" class="card mb-3">
+            <div class="card-header h5">実行中のタスク</div>
+            <ul id="in-progress-task-list" class="list-group list-group-flush"></ul>
+        </div>
+
+        <div id="completed-task-area" class="card">
+            <div class="card-header h5">完了済みのタスク</div>
+             <ul id="completed-task-list" class="list-group list-group-flush"></ul>
+        </div>
+    </div>
+
+    <!-- タスク編集用モーダル -->
+    <div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editTaskModalLabel">タスクを編集</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-task-form">
+                        <div class="mb-3">
+                            <label for="edit-task-text" class="form-label">タスク内容</label>
+                            <input type="text" class="form-control" id="edit-task-text" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-task-details" class="form-label">詳細情報</label>
+                            <textarea class="form-control" id="edit-task-details" rows="4" placeholder="タスクの詳細情報を入力してください"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-task-due-date" class="form-label">期限</label>
+                            <input type="datetime-local" class="form-control" id="edit-task-due-date">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-task-priority" class="form-label">優先度</label>
+                            <select class="form-select" id="edit-task-priority">
+                                <option value="3">★★★</option>
+                                <option value="2">★★</option>
+                                <option value="1">★</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                    <button type="button" class="btn btn-primary" id="save-edit-button">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
